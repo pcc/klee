@@ -15,7 +15,7 @@
 #include "klee/util/ExprPPrinter.h"
 #include "klee/util/ExprVisitor.h"
 
-#include "klee/util/ExprSMTLIBLetPrinter.h"
+#include "klee/util/ExprSMTLIBPrinter.h"
 
 #include "llvm/ADT/OwningPtr.h"
 #include "llvm/ADT/StringExtras.h"
@@ -398,8 +398,8 @@ static bool printInputAsSMTLIBv2(const char *Filename,
 	if (!success)
 	return false;
 
-	ExprSMTLIBPrinter* printer = createSMTLIBPrinter();
-	printer->setOutput(std::cout);
+	ExprSMTLIBPrinter printer;
+	printer.setOutput(std::cout);
 
 	unsigned int queryNumber = 0;
 	//Loop over the declarations
@@ -424,12 +424,12 @@ static bool printInputAsSMTLIBv2(const char *Filename,
 			 */
 			ConstraintManager constraintM(QC->Constraints);
 			Query query(constraintM,QC->Query);
-			printer->setQuery(query);
+			printer.setQuery(query);
 
 			if(!QC->Objects.empty())
-				printer->setArrayValuesToGet(QC->Objects);
+				printer.setArrayValuesToGet(QC->Objects);
 
-			printer->generateOutput();
+			printer.generateOutput();
 
 
 			queryNumber++;
@@ -441,8 +441,6 @@ static bool printInputAsSMTLIBv2(const char *Filename,
 			ie = Decls.end(); it != ie; ++it)
 		delete *it;
 	delete P;
-
-	delete printer;
 
 	return true;
 }
